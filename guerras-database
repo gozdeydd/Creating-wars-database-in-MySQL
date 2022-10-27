@@ -1,0 +1,91 @@
+create database guerras;
+
+drop table guerras, alianzas, paises, diplomacia, participaciones ;
+
+use guerras;
+
+
+create table guerras (
+	id_guerra integer not null auto_increment, 
+	nombre_guerra varchar(50),
+	fecha_inicio date,
+	fecha_termino date,
+	constraint pk_guerra primary key(id_guerra)
+);
+
+create table alianzas (
+	id_alianza integer not null auto_increment,
+	nombre_alianza varchar(100) not null,
+	constraint pk_alianza primary key(id_alianza)
+);
+
+create table paises (
+	id_pais integer not null auto_increment ,
+	nombre_pais varchar(50) not null,
+	constraint pk_paises primary key (id_pais)
+);
+
+create table diplomacia (
+	id_diplomacia integer not null auto_increment, 
+	id_alianza integer not null, id_pais integer not null, 
+	constraint pk_diplomacia primary key (id_diplomacia), 
+	constraint fk_alianza foreign key (id_alianza) references alianzas(id_alianza),
+	constraint fk_pais foreign key (id_alianza) references paises(id_pais),
+	constraint un_diplomacia unique (id_alianza, id_pais)
+);
+
+	
+create table participaciones (
+	id_participacion integer not null auto_increment, 
+	id_alianza1 integer not null,
+	id_alianza2 integer not null, 
+	id_alianza3 integer,
+	id_guerra integer not null,
+
+	constraint pk_participacion primary key(id_participacion), 
+	constraint fk_guerra2 foreign key (id_guerra) references guerras(id_guerra),
+	constraint fk_alianza1 foreign key (id_alianza1) references alianzas(id_alianza), 
+	constraint fk_alianza2 foreign key (id_alianza2) references alianzas(id_alianza), 
+	constraint fk_alianza3 foreign key (id_alianza3) references alianzas(id_alianza),
+	constraint un_participacion unique (id_guerra, id_alianza1, id_alianza2, id_alianza3)
+);
+
+show tables;
+
+insert into guerras ( nombre_guerra, fecha_inicio, fecha_termino) values("Guerra Mundial II", "1939-09-01","1945-09-02");
+
+insert into paises (nombre_pais) values ("Alemania"),("Reino Unido"),("Estados Unidos"),("Italia"),("Union Sovietica"),("Japan"),("China"), ("Francia"), ("Finlandia");
+insert into paises (nombre_pais) values ("Hungaría"), ("Romanía"),("España"),("Croatía"), ("Bulgaria"),("Albania"),("Francia de Vichy"),("Polonia"),("Australia"),("Nueva zelandia"),
+("Belgica");
+
+select *from paises;
+
+insert into alianzas (nombre_alianza) values ("Potencias de Eje"),("Aliados");
+
+select * from alianzas as a;
+select * from guerras as g;
+select * from paises as p;
+select * from participaciones as pr;
+select * from diplomacia as d;
+
+insert into diplomacia (id_alianza,id_pais) values (1,1),(2,2),(2,3),(1,4),(2,5),(1,6),(2,7),(2,8),(1,9),(1,10),(1,16),(2,17),(1,18);
+
+select*from diplomacia;
+
+insert into participaciones (id_guerra, id_alianza1, id_alianza2, id_alianza3) values (1, 1, 2, null);  
+
+
+
+drop view vista_guerra;
+
+create view vista_guerra as select 
+	g.nombre_guerra, g.fecha_inicio, g.fecha_termino,  a.nombre_alianza, p.nombre_pais
+	from guerras g
+	natural join participaciones pr
+	natural join alianzas a
+	natural join diplomacia d	
+	natural join paises p;
+
+select * from vista_guerra; 
+
+select *from diplomacia;
